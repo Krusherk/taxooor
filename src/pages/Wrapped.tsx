@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect, useMemo } from "react";
 import { formatCurrency } from "@/lib/utils";
 import { getEntries, getSettings, getTotalNGN, getTotalUSD } from "@/lib/store";

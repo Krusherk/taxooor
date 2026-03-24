@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { formatCurrency } from "@/lib/utils";
 import { calculateTinPenalty, calculateLatePenalty } from "@/lib/tax";
@@ -56,7 +54,7 @@ export default function PenaltiesPage() {
                   background: `linear-gradient(to right, #FF3B30 ${(tinMonths/24)*100}%, rgba(0,0,0,0.1) ${(tinMonths/24)*100}%)`
                 }}
               />
-              <style jsx>{`
+              <style>{`
                 input[type=range]::-webkit-slider-thumb {
                   appearance: none;
                   width: 24px;

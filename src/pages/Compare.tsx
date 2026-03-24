@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { formatCurrency } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";

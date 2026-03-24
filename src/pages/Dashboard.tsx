@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect, useCallback } from "react";
 import { formatCurrency, generateId } from "@/lib/utils";
 import type { IncomeEntry, Platform } from "@/lib/types";
@@ -23,7 +21,7 @@ export default function DashboardPage() {
   const [rateInput, setRateInput] = useState("1380");
 
   const [date, setDate] = useState("");
-  const [platform, setPlatform] = useState(PLATFORMS[0]);
+  const [platform, setPlatform] = useState<Platform>(PLATFORMS[0]);
   const [amount, setAmount] = useState("");
   const [currency, setCurrency] = useState<"USD" | "NGN">("USD");
   const [description, setDescription] = useState("");

@@ -1,8 +1,5 @@
-"use client";
-
 import { useState } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { LayoutDashboard, Calculator, AlertOctagon, ArrowRightLeft, TrendingUp, PiggyBank, FileText, Menu, X } from "lucide-react";
 
@@ -17,13 +14,13 @@ const navItems = [
 ];
 
 export default function Sidebar() {
-  const pathname = usePathname();
+  const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
     <>
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-white/75 backdrop-blur-2xl border-b border-black/5">
-        <Link href="/" className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2">
           <span className="font-semibold text-xl tracking-tight-apple">Taxooor</span>
         </Link>
         <button
@@ -50,7 +47,7 @@ export default function Sidebar() {
       >
         <div className="px-8 py-10">
           <Link
-            href="/"
+            to="/"
             className="block transition-transform active:scale-95"
             onClick={() => setMobileOpen(false)}
           >
@@ -65,12 +62,12 @@ export default function Sidebar() {
 
         <nav className="flex-1 overflow-y-auto px-4 space-y-1">
           {navItems.map((item) => {
-            const isActive = pathname === item.href;
+            const isActive = location.pathname === item.href;
             const Icon = item.icon;
             return (
               <Link
                 key={item.href}
-                href={item.href}
+                to={item.href}
                 onClick={() => setMobileOpen(false)}
                 className={cn(
                   "flex items-center gap-3 px-4 py-3 rounded-2xl text-[15px] font-medium transition-all duration-200",

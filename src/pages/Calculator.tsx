@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect, useMemo } from "react";
 import { formatCurrency, generateId } from "@/lib/utils";
 import type { Deduction } from "@/lib/types";
