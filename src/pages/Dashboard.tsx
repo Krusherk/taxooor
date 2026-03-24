@@ -15,17 +15,40 @@ import { calculateTax } from "@/lib/tax";
 import { generateTaxReport } from "@/lib/pdf";
 import { Plus, Download, X, Edit2 } from "lucide-react";
 
+const cardStyle: React.CSSProperties = {
+  background: "rgba(255,255,255,0.75)",
+  backdropFilter: "blur(40px)",
+  WebkitBackdropFilter: "blur(40px)",
+  border: "1px solid rgba(0,0,0,0.08)",
+  borderRadius: 24,
+  boxShadow: "0 4px 24px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02)",
+};
+
+const labelStyle: React.CSSProperties = {
+  fontSize: 12,
+  fontWeight: 600,
+  color: "#86868b",
+  textTransform: "uppercase",
+  letterSpacing: "0.08em",
+  marginBottom: 8,
+};
+
+const bigNumberStyle: React.CSSProperties = {
+  fontSize: "clamp(28px, 5vw, 48px)",
+  fontWeight: 700,
+  letterSpacing: "-0.04em",
+  lineHeight: 1.1,
+};
+
 export default function DashboardPage() {
   const [entries, setEntries] = useState<IncomeEntry[]>([]);
   const [rate, setRate] = useState(1380);
   const [rateInput, setRateInput] = useState("1380");
-
   const [date, setDate] = useState("");
   const [platform, setPlatform] = useState<Platform>(PLATFORMS[0]);
   const [amount, setAmount] = useState("");
   const [currency, setCurrency] = useState<"USD" | "NGN">("USD");
   const [description, setDescription] = useState("");
-
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -43,12 +66,8 @@ export default function DashboardPage() {
   const handleAdd = useCallback(() => {
     if (!amount || !date) return;
     const entry: IncomeEntry = {
-      id: generateId(),
-      date,
-      platform,
-      amount: parseFloat(amount),
-      currency,
-      description,
+      id: generateId(), date, platform,
+      amount: parseFloat(amount), currency, description,
     };
     setEntries(addEntry(entry));
     setAmount("");
@@ -73,182 +92,217 @@ export default function DashboardPage() {
   if (!mounted) return null;
 
   return (
-    <div className="space-y-8 animate-fade-in pb-20">
-      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+    <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
+      {/* Header */}
+      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-end", justifyContent: "space-between", gap: 24 }}>
         <div>
-          <h1 className="text-4xl md:text-[56px] font-bold tracking-tighter-apple leading-none">
+          <h1 style={{ fontSize: "clamp(36px, 6vw, 56px)", fontWeight: 700, letterSpacing: "-0.04em", lineHeight: 1, color: "#1d1d1f" }}>
             Dashboard
           </h1>
-          <p className="text-[#86868b] mt-3 md:mt-4 text-[17px]">
+          <p style={{ color: "#86868b", marginTop: 12, fontSize: 17 }}>
             Income tracking aligned with NTA 2026.
           </p>
         </div>
         <button
           onClick={handleExportPDF}
-          className="btn-apple bg-white text-[#1d1d1f] hover:bg-gray-50 border border-black/5 shadow-sm flex items-center justify-center gap-2"
+          style={{
+            display: "flex", alignItems: "center", gap: 8,
+            background: "#fff", color: "#1d1d1f",
+            border: "1px solid rgba(0,0,0,0.08)",
+            borderRadius: 9999, padding: "12px 24px",
+            fontSize: 15, fontWeight: 600, cursor: "pointer",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+          }}
         >
-          <Download className="w-4 h-4" /> Export Report
+          <Download style={{ width: 16, height: 16 }} /> Export Report
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="apple-card p-8 flex flex-col justify-center">
-          <p className="text-[13px] font-semibold text-[#86868b] uppercase tracking-wider mb-2">Total USD</p>
-          <p className="text-4xl lg:text-5xl font-bold tracking-tighter-apple">{formatCurrency(totalUSD, "USD")}</p>
+      {/* Stat Cards */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 20 }}>
+        <div style={{ ...cardStyle, padding: 32 }}>
+          <p style={labelStyle}>Total USD</p>
+          <p style={bigNumberStyle}>{formatCurrency(totalUSD, "USD")}</p>
         </div>
 
-        <div className="apple-card p-8 flex flex-col justify-center relative group">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-[13px] font-semibold text-[#86868b] uppercase tracking-wider">Exchange Rate</p>
-            <Edit2 className="w-3 h-3 text-[#86868b] opacity-0 group-hover:opacity-100 transition-opacity" />
+        <div style={{ ...cardStyle, padding: 32, position: "relative" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", ...labelStyle, marginBottom: 8 }}>
+            <span>Exchange Rate</span>
+            <Edit2 style={{ width: 12, height: 12, opacity: 0.4 }} />
           </div>
-          <div className="flex items-center gap-1">
-            <span className="text-4xl lg:text-5xl font-bold tracking-tighter-apple text-[#86868b]">₦</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+            <span style={{ ...bigNumberStyle, color: "#86868b" }}>₦</span>
             <input
               type="number"
               value={rateInput}
               onChange={(e) => setRateInput(e.target.value)}
               onBlur={handleRateSave}
               onKeyDown={(e) => e.key === "Enter" && handleRateSave()}
-              className="bg-transparent text-4xl lg:text-5xl font-bold tracking-tighter-apple focus:outline-none w-32 pb-1"
+              style={{ ...bigNumberStyle, background: "transparent", border: "none", outline: "none", width: 140 }}
             />
           </div>
         </div>
 
-        <div className="apple-card p-8 flex flex-col justify-center bg-[#007AFF] text-white border-transparent">
-          <p className="text-[13px] font-semibold text-white/80 uppercase tracking-wider mb-2">Taxable NGN</p>
-          <p className="text-4xl lg:text-5xl font-bold tracking-tighter-apple">{formatCurrency(totalNGN, "NGN")}</p>
+        <div style={{ ...cardStyle, padding: 32, background: "#007AFF", borderColor: "transparent" }}>
+          <p style={{ ...labelStyle, color: "rgba(255,255,255,0.7)" }}>Taxable NGN</p>
+          <p style={{ ...bigNumberStyle, color: "#fff" }}>{formatCurrency(totalNGN, "NGN")}</p>
         </div>
       </div>
 
-      <div className="apple-card overflow-hidden">
-        <div className="px-8 py-6 border-b border-black/5 flex justify-between items-center bg-white/40">
-          <h2 className="text-[17px] font-semibold">Log Income</h2>
+      {/* Income Form */}
+      <div style={cardStyle}>
+        <div style={{
+          padding: "20px 32px",
+          borderBottom: "1px solid rgba(0,0,0,0.06)",
+          background: "rgba(255,255,255,0.4)",
+          borderTopLeftRadius: 24,
+          borderTopRightRadius: 24,
+        }}>
+          <h2 style={{ fontSize: 17, fontWeight: 600 }}>Log Income</h2>
         </div>
-        
-        <div className="p-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 items-end">
-          <div className="flex flex-col gap-2">
-            <label className="text-[12px] font-semibold text-[#86868b] uppercase tracking-wider">Date</label>
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="input-apple"
-            />
+
+        <div style={{
+          padding: 32,
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
+          gap: 16,
+          alignItems: "end",
+        }}>
+          <div>
+            <label style={labelStyle}>Date</label>
+            <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="input-apple" style={{ width: "100%" }} />
           </div>
-          
-          <div className="flex flex-col gap-2">
-            <label className="text-[12px] font-semibold text-[#86868b] uppercase tracking-wider">Platform</label>
-            <select
-              value={platform}
-              onChange={(e) => setPlatform(e.target.value as Platform)}
-              className="input-apple appearance-none"
-            >
-              {PLATFORMS.map((p) => (
-                <option key={p} value={p}>{p}</option>
-              ))}
+          <div>
+            <label style={labelStyle}>Platform</label>
+            <select value={platform} onChange={(e) => setPlatform(e.target.value as Platform)} className="input-apple" style={{ width: "100%" }}>
+              {PLATFORMS.map((p) => <option key={p} value={p}>{p}</option>)}
             </select>
           </div>
-          
-          <div className="flex flex-col gap-2">
-            <label className="text-[12px] font-semibold text-[#86868b] uppercase tracking-wider">Currency</label>
-            <div className="flex bg-black/5 p-1 rounded-[14px]">
+          <div>
+            <label style={labelStyle}>Currency</label>
+            <div style={{ display: "flex", background: "rgba(0,0,0,0.05)", padding: 4, borderRadius: 14 }}>
               {(["USD", "NGN"] as const).map((c) => (
                 <button
                   key={c}
                   onClick={() => setCurrency(c)}
-                  className={`flex-1 py-1.5 rounded-[10px] text-[15px] font-medium transition-colors ${
-                    currency === c ? "bg-white shadow-sm text-black" : "text-[#86868b] hover:text-black"
-                  }`}
+                  style={{
+                    flex: 1, padding: "8px 0", borderRadius: 10, fontSize: 15, fontWeight: 500,
+                    border: "none", cursor: "pointer",
+                    background: currency === c ? "#fff" : "transparent",
+                    color: currency === c ? "#1d1d1f" : "#86868b",
+                    boxShadow: currency === c ? "0 1px 4px rgba(0,0,0,0.08)" : "none",
+                    transition: "all 0.2s ease",
+                  }}
                 >
                   {c}
                 </button>
               ))}
             </div>
           </div>
-
-          <div className="flex flex-col gap-2">
-            <label className="text-[12px] font-semibold text-[#86868b] uppercase tracking-wider">Amount</label>
-            <input
-              type="number"
-              placeholder="0.00"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              className="input-apple"
-            />
+          <div>
+            <label style={labelStyle}>Amount</label>
+            <input type="number" placeholder="0.00" value={amount} onChange={(e) => setAmount(e.target.value)} className="input-apple" style={{ width: "100%" }} />
           </div>
-          
-          <div className="flex flex-col gap-2 lg:col-span-2">
-            <label className="text-[12px] font-semibold text-[#86868b] uppercase tracking-wider">Note (Optional)</label>
-            <div className="flex gap-2">
+          <div style={{ gridColumn: "span 2" }}>
+            <label style={labelStyle}>Note (Optional)</label>
+            <div style={{ display: "flex", gap: 8 }}>
               <input
-                type="text"
-                placeholder="Client name, project..."
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="input-apple flex-1"
+                type="text" placeholder="Client name, project..."
+                value={description} onChange={(e) => setDescription(e.target.value)}
+                className="input-apple" style={{ flex: 1 }}
                 onKeyDown={(e) => e.key === "Enter" && handleAdd()}
               />
               <button
                 onClick={handleAdd}
                 disabled={!amount || !date}
-                className="btn-apple bg-[#007AFF] hover:bg-[#0066cc] w-12 h-12 p-0 flex items-center justify-center flex-shrink-0"
+                style={{
+                  width: 48, height: 48, borderRadius: 9999, border: "none", cursor: "pointer",
+                  background: "#007AFF", color: "#fff",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  opacity: (!amount || !date) ? 0.4 : 1,
+                  flexShrink: 0,
+                }}
               >
-                <Plus className="w-5 h-5" />
+                <Plus style={{ width: 20, height: 20 }} />
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="apple-card overflow-hidden">
-        <div className="px-8 py-6 border-b border-black/5 flex justify-between items-center bg-white/40">
-          <h2 className="text-[17px] font-semibold">Recent Transactions</h2>
-          <span className="bg-black/5 text-[#86868b] text-[13px] font-semibold px-3 py-1 rounded-full">
+      {/* Transaction Table */}
+      <div style={cardStyle}>
+        <div style={{
+          padding: "20px 32px",
+          borderBottom: "1px solid rgba(0,0,0,0.06)",
+          background: "rgba(255,255,255,0.4)",
+          borderTopLeftRadius: 24,
+          borderTopRightRadius: 24,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}>
+          <h2 style={{ fontSize: 17, fontWeight: 600 }}>Recent Transactions</h2>
+          <span style={{
+            background: "rgba(0,0,0,0.05)", color: "#86868b",
+            fontSize: 13, fontWeight: 600,
+            padding: "4px 12px", borderRadius: 9999,
+          }}>
             {entries.length}
           </span>
         </div>
-        
+
         {entries.length === 0 ? (
-          <div className="p-20 text-center">
-            <p className="text-xl font-semibold text-[#1d1d1f] mb-2">No income logged yet</p>
-            <p className="text-[#86868b]">Add your first transaction above to see it here.</p>
+          <div style={{ padding: "80px 32px", textAlign: "center" }}>
+            <p style={{ fontSize: 20, fontWeight: 600, color: "#1d1d1f", marginBottom: 8 }}>No income logged yet</p>
+            <p style={{ color: "#86868b" }}>Add your first transaction above to see it here.</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", textAlign: "left", borderCollapse: "collapse" }}>
               <thead>
                 <tr>
-                  <th className="px-8 py-4 text-[12px] font-semibold text-[#86868b] uppercase tracking-wider border-b border-black/5">Date</th>
-                  <th className="px-8 py-4 text-[12px] font-semibold text-[#86868b] uppercase tracking-wider border-b border-black/5">Platform</th>
-                  <th className="px-8 py-4 text-[12px] font-semibold text-[#86868b] uppercase tracking-wider border-b border-black/5 text-right">Amount</th>
-                  <th className="px-8 py-4 text-[12px] font-semibold text-[#86868b] uppercase tracking-wider border-b border-black/5">Note</th>
-                  <th className="px-8 py-4 text-[12px] font-semibold text-[#86868b] uppercase tracking-wider border-b border-black/5 text-right"></th>
+                  {["Date", "Platform", "Amount", "Note", ""].map((h, i) => (
+                    <th key={h || i} style={{
+                      padding: "12px 32px",
+                      ...labelStyle,
+                      borderBottom: "1px solid rgba(0,0,0,0.06)",
+                      textAlign: h === "Amount" ? "right" : "left",
+                    }}>{h}</th>
+                  ))}
                 </tr>
               </thead>
-              <tbody className="text-[15px]">
+              <tbody>
                 {entries.map((entry) => (
-                  <tr key={entry.id} className="border-b border-black/5 last:border-0 hover:bg-black/[0.02] transition-colors">
-                    <td className="px-8 py-5">
+                  <tr key={entry.id} style={{ borderBottom: "1px solid rgba(0,0,0,0.04)" }}>
+                    <td style={{ padding: "16px 32px", fontSize: 15 }}>
                       {new Date(entry.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                     </td>
-                    <td className="px-8 py-5">
-                      <span className="bg-black/5 text-[#1d1d1f] px-3 py-1 rounded-full text-[13px] font-medium">
+                    <td style={{ padding: "16px 32px" }}>
+                      <span style={{
+                        background: "rgba(0,0,0,0.05)", color: "#1d1d1f",
+                        padding: "4px 12px", borderRadius: 9999,
+                        fontSize: 13, fontWeight: 500,
+                      }}>
                         {entry.platform}
                       </span>
                     </td>
-                    <td className="px-8 py-5 text-right font-semibold">
+                    <td style={{ padding: "16px 32px", textAlign: "right", fontWeight: 600, fontSize: 15 }}>
                       {formatCurrency(entry.amount, entry.currency)}
                     </td>
-                    <td className="px-8 py-5 text-[#86868b] truncate max-w-[200px]">
+                    <td style={{ padding: "16px 32px", color: "#86868b", fontSize: 15, maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       {entry.description || "—"}
                     </td>
-                    <td className="px-8 py-5 text-right">
+                    <td style={{ padding: "16px 32px", textAlign: "right" }}>
                       <button
                         onClick={() => handleDelete(entry.id)}
-                        className="text-[#86868b] hover:text-[#FF3B30] p-2 rounded-full hover:bg-[#FF3B30]/10 transition-colors"
+                        style={{
+                          background: "none", border: "none", cursor: "pointer", padding: 8,
+                          borderRadius: "50%", color: "#86868b",
+                          transition: "all 0.2s ease",
+                        }}
                       >
-                        <X className="w-4 h-4" />
+                        <X style={{ width: 16, height: 16 }} />
                       </button>
                     </td>
                   </tr>

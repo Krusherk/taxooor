@@ -19,81 +19,180 @@ export default function Sidebar() {
 
   return (
     <>
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-white/75 backdrop-blur-2xl border-b border-black/5">
-        <Link to="/" className="flex items-center gap-2">
-          <span className="font-semibold text-xl tracking-tight-apple">Taxooor</span>
+      {/* Mobile Top Bar */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50" style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: "16px 20px",
+        background: "rgba(255,255,255,0.8)",
+        backdropFilter: "blur(24px)",
+        WebkitBackdropFilter: "blur(24px)",
+        borderBottom: "1px solid rgba(0,0,0,0.06)"
+      }}>
+        <Link to="/" style={{ textDecoration: "none" }}>
+          <span style={{ fontSize: 20, fontWeight: 700, letterSpacing: "-0.04em", color: "#1d1d1f" }}>Taxooor</span>
         </Link>
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="p-2 rounded-full bg-black/5 hover:bg-black/10 transition-colors"
+          style={{
+            padding: 8,
+            borderRadius: "50%",
+            background: "rgba(0,0,0,0.05)",
+            border: "none",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
+          }}
         >
-          {mobileOpen ? <X className="w-5 h-5 text-black/70" /> : <Menu className="w-5 h-5 text-black/70" />}
+          {mobileOpen ? <X style={{ width: 20, height: 20, color: "#666" }} /> : <Menu style={{ width: 20, height: 20, color: "#666" }} />}
         </button>
       </div>
 
+      {/* Mobile Overlay */}
       {mobileOpen && (
         <div
-          className="lg:hidden fixed inset-0 z-40 bg-black/20 backdrop-blur-sm transition-opacity"
           onClick={() => setMobileOpen(false)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 40,
+            background: "rgba(0,0,0,0.2)",
+            backdropFilter: "blur(4px)",
+          }}
+          className="lg:hidden"
         />
       )}
 
+      {/* Sidebar */}
       <aside
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          zIndex: 50,
+          height: "100%",
+          width: 280,
+          background: "rgba(255,255,255,0.65)",
+          backdropFilter: "blur(60px)",
+          WebkitBackdropFilter: "blur(60px)",
+          borderRight: "1px solid rgba(0,0,0,0.06)",
+          display: "flex",
+          flexDirection: "column",
+          transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+          transform: mobileOpen ? "translateX(0)" : undefined,
+        }}
         className={cn(
-          "fixed top-0 left-0 z-50 h-full w-72 bg-white/60 backdrop-blur-[60px] border-r border-black/5 flex flex-col transition-transform duration-500 cubic-bezier(0.16, 1, 0.3, 1)",
           "lg:translate-x-0 lg:z-30",
-          mobileOpen ? "translate-x-0" : "-translate-x-full"
+          !mobileOpen && "-translate-x-full lg:translate-x-0"
         )}
       >
-        <div className="px-8 py-10">
+        {/* Brand */}
+        <div style={{ padding: "40px 32px 32px" }}>
           <Link
             to="/"
-            className="block transition-transform active:scale-95"
             onClick={() => setMobileOpen(false)}
+            style={{ textDecoration: "none", display: "block" }}
           >
-            <span className="text-3xl font-bold tracking-tighter-apple text-[#1d1d1f] block leading-none">
+            <span style={{
+              fontSize: 28,
+              fontWeight: 800,
+              letterSpacing: "-0.04em",
+              color: "#1d1d1f",
+              display: "block",
+              lineHeight: 1,
+            }}>
               Taxooor
             </span>
-            <span className="text-[11px] font-semibold text-[#86868b] uppercase tracking-widest mt-2 block">
+            <span style={{
+              fontSize: 10,
+              fontWeight: 600,
+              color: "#86868b",
+              textTransform: "uppercase",
+              letterSpacing: "0.12em",
+              marginTop: 8,
+              display: "block",
+            }}>
               Compliance Protocol
             </span>
           </Link>
         </div>
 
-        <nav className="flex-1 overflow-y-auto px-4 space-y-1">
-          {navItems.map((item) => {
-            const isActive = location.pathname === item.href;
-            const Icon = item.icon;
-            return (
-              <Link
-                key={item.href}
-                to={item.href}
-                onClick={() => setMobileOpen(false)}
-                className={cn(
-                  "flex items-center gap-3 px-4 py-3 rounded-2xl text-[15px] font-medium transition-all duration-200",
-                  isActive
-                    ? "bg-[#1d1d1f] text-white shadow-md shadow-black/10 scale-100"
-                    : "text-[#1d1d1f] hover:bg-black/5 scale-[0.98] hover:scale-100"
-                )}
-              >
-                <Icon className={cn("w-5 h-5", isActive ? "text-white" : "text-[#86868b]")} strokeWidth={isActive ? 2.5 : 2} />
-                {item.label}
-              </Link>
-            );
-          })}
+        {/* Navigation */}
+        <nav style={{ flex: 1, overflowY: "auto", padding: "0 16px" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            {navItems.map((item) => {
+              const isActive = location.pathname === item.href;
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.href}
+                  to={item.href}
+                  onClick={() => setMobileOpen(false)}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 12,
+                    padding: "12px 16px",
+                    borderRadius: 16,
+                    fontSize: 15,
+                    fontWeight: 500,
+                    textDecoration: "none",
+                    transition: "all 0.2s ease",
+                    background: isActive ? "#1d1d1f" : "transparent",
+                    color: isActive ? "#fff" : "#1d1d1f",
+                    boxShadow: isActive ? "0 4px 12px rgba(0,0,0,0.1)" : "none",
+                  }}
+                >
+                  <Icon
+                    style={{ width: 20, height: 20, color: isActive ? "#fff" : "#86868b" }}
+                    strokeWidth={isActive ? 2.5 : 2}
+                  />
+                  {item.label}
+                </Link>
+              );
+            })}
+          </div>
         </nav>
 
-        <div className="p-6">
-          <div className="bg-white/80 backdrop-blur-md rounded-3xl p-5 border border-black/5 shadow-sm text-center">
-            <p className="text-[11px] font-semibold text-[#86868b] uppercase tracking-widest mb-3">Powered By</p>
+        {/* Footer CTA */}
+        <div style={{ padding: 20 }}>
+          <div style={{
+            background: "rgba(255,255,255,0.85)",
+            backdropFilter: "blur(16px)",
+            borderRadius: 24,
+            padding: 20,
+            border: "1px solid rgba(0,0,0,0.05)",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.03)",
+            textAlign: "center",
+          }}>
+            <p style={{ fontSize: 10, fontWeight: 600, color: "#86868b", textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 12 }}>
+              Powered By
+            </p>
             <a
               href="https://www.raenest.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-apple bg-[#007AFF] hover:bg-[#0066CC] flex justify-center items-center w-full text-[14px] py-3 gap-2"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 8,
+                background: "#007AFF",
+                color: "#fff",
+                borderRadius: 9999,
+                padding: "12px 0",
+                fontSize: 14,
+                fontWeight: 600,
+                textDecoration: "none",
+                transition: "all 0.2s ease",
+                width: "100%",
+                border: "none",
+              }}
             >
               Raenest
-              <TrendingUp className="w-4 h-4" />
+              <TrendingUp style={{ width: 16, height: 16 }} />
             </a>
           </div>
         </div>

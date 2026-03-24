@@ -12,10 +12,28 @@ import WrappedPage from "@/pages/Wrapped";
 
 export default function App() {
   return (
-    <div className="min-h-full flex bg-background text-foreground font-sans selection:bg-[#007AFF] selection:text-white">
+    <div style={{
+      minHeight: "100vh",
+      display: "flex",
+      fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
+    }}>
       <Sidebar />
-      <main className="flex-1 lg:ml-72 pt-16 lg:pt-0 min-h-screen relative">
-        <div className="max-w-[72rem] mx-auto px-6 sm:px-10 lg:px-16 py-12 lg:py-24">
+      <main style={{
+        flex: 1,
+        marginLeft: 0,
+        paddingTop: 64,
+        minHeight: "100vh",
+        position: "relative",
+      }} className="lg:ml-[280px] lg:pt-0">
+        <div style={{
+          maxWidth: 1100,
+          marginLeft: "auto",
+          marginRight: "auto",
+          paddingLeft: 24,
+          paddingRight: 24,
+          paddingTop: 48,
+          paddingBottom: 48,
+        }} className="sm:px-10 lg:px-16 lg:py-16">
           <Routes>
             <Route path="/" element={<DashboardPage />} />
             <Route path="/tax-calculator" element={<TaxCalculatorPage />} />
