@@ -6,7 +6,7 @@ import type { Deduction } from "@/lib/types";
 import { getEntries, getSettings, getTotalNGN, getTotalUSD } from "@/lib/store";
 import { calculateTax } from "@/lib/tax";
 import { generateTaxReport } from "@/lib/pdf";
-import { Plus, X, Download } from "lucide-react";
+import { Plus, X, Download, AlertOctagon } from "lucide-react";
 
 const DEDUCTION_PRESETS = [
   { name: "Rent Relief", maxAllowed: 500_000 },
