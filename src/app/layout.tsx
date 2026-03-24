@@ -1,29 +1,17 @@
 import type { Metadata } from "next";
-import { EB_Garamond, Space_Mono, Inter } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/layout/sidebar";
-
-const garamond = EB_Garamond({
-  variable: "--font-garamond",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
-
-const spaceMono = Space_Mono({
-  variable: "--font-space-mono",
-  subsets: ["latin"],
-  weight: ["400", "700"],
-});
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "500"],
+  // Inter offers tracking very close to San Francisco when specifically styled
 });
 
 export const metadata: Metadata = {
-  title: "Taxooor — Compliance & Yield",
-  description: "Editorial fintech grade compliance protocol for NTA 2026.",
+  title: "Taxooor",
+  description: "A premium compliance protocol.",
 };
 
 export default function RootLayout({
@@ -32,11 +20,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${garamond.variable} ${spaceMono.variable} ${inter.variable} h-full antialiased`}>
-      <body className="min-h-full flex bg-background text-foreground font-sans selection:bg-black selection:text-white">
+    <html lang="en" className={`${inter.variable} h-full antialiased`}>
+      <body className="min-h-full flex bg-background text-foreground font-sans selection:bg-[#007AFF] selection:text-white">
         <Sidebar />
-        <main className="flex-1 lg:ml-64 pt-14 lg:pt-0 min-h-screen relative border-l border-black bg-transparent">
-          <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 py-10 lg:py-16">
+        <main className="flex-1 lg:ml-72 pt-16 lg:pt-0 min-h-screen relative">
+          <div className="max-w-[72rem] mx-auto px-6 sm:px-10 lg:px-16 py-12 lg:py-24">
             {children}
           </div>
         </main>

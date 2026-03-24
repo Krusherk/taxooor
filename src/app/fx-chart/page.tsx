@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 
 function generateFXData(baseRate: number) {
-  const months = ["OCT", "NOV", "DEC", "JAN", "FEB", "MAR"];
+  const months = ["Oct", "Nov", "Dec", "Jan", "Feb", "Mar"];
   return months.map((month, i) => {
     const volatility = (Math.sin(i * 1.5) * 40) + (i * 15);
     const holdVolatility = (Math.sin(i * 0.8) * 20) + (i * 20);
@@ -17,14 +17,17 @@ function generateFXData(baseRate: number) {
 function CustomTooltip({ active, payload, label }: { active?: boolean; payload?: Array<{value: number; dataKey: string; color: string}>; label?: string }) {
   if (!active || !payload) return null;
   return (
-    <div className="bg-black text-white border border-white p-4 uppercase font-mono text-[10px] tracking-wider">
-      <p className="mb-3 border-b border-white/20 pb-2">{label}</p>
+    <div className="bg-white/90 backdrop-blur-xl border border-black/5 p-4 rounded-2xl shadow-lg">
+      <p className="text-[13px] font-semibold text-[#86868b] uppercase tracking-wider mb-3 pb-2 border-b border-black/5">{label}</p>
       {payload.map((entry, i) => (
-        <div key={i} className="flex items-center gap-4 mb-1">
-          <span className="opacity-50 min-w-[120px]">
-            {entry.dataKey === "immediate" ? "SPOT CONVERSION" : "RAENEST DEFERRED"}
-          </span>
-          <span className="font-bold ml-auto" style={{ color: entry.dataKey === "hold" ? "#00FF88" : "white" }}>
+        <div key={i} className="flex items-center justify-between gap-8 mb-2 last:mb-0">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
+            <span className="text-[14px] font-medium text-[#1d1d1f]">
+              {entry.dataKey === "immediate" ? "Spot Bank Rate" : "Raenest FastTrack"}
+            </span>
+          </div>
+          <span className="font-bold text-[15px]" style={{ color: entry.dataKey === "hold" ? "#34C759" : "#1d1d1f" }}>
             ₦{entry.value.toLocaleString()}
           </span>
         </div>
@@ -41,61 +44,73 @@ export default function FXChartPage() {
   const avgHold = Math.round(data.reduce((s, d) => s + d.hold, 0) / data.length);
 
   return (
-    <div className="space-y-12 animate-fade-in pb-16">
-      <div className="border-b border-black pb-6">
-        <h1 className="ethos-title text-5xl md:text-7xl font-semibold text-black leading-none">
-          Volatility.
-        </h1>
-        <p className="ethos-label mt-4 text-black font-bold">
-          USD/NGN INDEX & YIELD TRACKING
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-0 border border-black bg-white/40 backdrop-blur-md">
-        <div className="p-6 border-b sm:border-b-0 sm:border-r border-black bg-white">
-          <p className="ethos-label text-black/50 mb-2">MID-MARKET BASELINE</p>
-          <p className="font-serif text-4xl text-black">₦{baseRate.toLocaleString()}</p>
-        </div>
-        <div className="p-6 border-b sm:border-b-0 sm:border-r border-black">
-          <p className="ethos-label text-black/50 mb-2">AVG FORCE-CONVERT</p>
-          <p className="font-serif text-4xl text-[#FE4A03]">₦{avgImmediate.toLocaleString()}</p>
-        </div>
-        <div className="p-6 bg-black text-white">
-          <p className="ethos-label text-white/50 mb-2">AVG RAENEST YIELD</p>
-          <p className="font-serif text-4xl text-[#00FF88]">₦{avgHold.toLocaleString()}</p>
+    <div className="space-y-8 animate-fade-in pb-20">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
+          <h1 className="text-4xl md:text-[56px] font-bold tracking-tighter-apple leading-none">
+            Volatility
+          </h1>
+          <p className="text-[#86868b] mt-3 md:mt-4 text-[17px]">
+            USD/NGN 6-Month Index Projection.
+          </p>
         </div>
       </div>
 
-      <div className="border border-black bg-white/80 backdrop-blur-md">
-        <div className="px-6 py-4 border-b border-black bg-black flex items-center justify-between">
-          <h3 className="ethos-label text-white">6-MONTH VOLATILITY SPREAD</h3>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="apple-card p-6 md:p-8 flex flex-col justify-center">
+          <p className="text-[12px] font-semibold text-[#86868b] uppercase tracking-wider mb-2">Mid-Market Baseline</p>
+          <p className="text-3xl lg:text-4xl font-bold tracking-tighter-apple text-[#1d1d1f]">₦{baseRate.toLocaleString()}</p>
         </div>
-        <div className="h-96 w-full p-4">
+        <div className="apple-card p-6 md:p-8 flex flex-col justify-center">
+          <p className="text-[12px] font-semibold text-[#86868b] uppercase tracking-wider mb-2">Avg Traditional Yield</p>
+          <p className="text-3xl lg:text-4xl font-bold tracking-tighter-apple text-[#86868b]">₦{avgImmediate.toLocaleString()}</p>
+        </div>
+        <div className="apple-card p-6 md:p-8 flex flex-col justify-center bg-[#007AFF] text-white border-transparent">
+          <p className="text-[12px] font-semibold text-white/80 uppercase tracking-wider mb-2">Avg Raenest Yield</p>
+          <p className="text-3xl lg:text-4xl font-bold tracking-tighter-apple">₦{avgHold.toLocaleString()}</p>
+        </div>
+      </div>
+
+      <div className="apple-card overflow-hidden">
+        <div className="px-8 py-6 border-b border-black/5 bg-white/40">
+          <h3 className="text-[17px] font-semibold">6-Month Volatility Spread</h3>
+        </div>
+        <div className="h-[400px] w-full p-6 bg-white/20">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={data} margin={{ top: 15, right: 30, left: 10, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#000000" strokeOpacity={0.1} vertical={false} />
-              <XAxis dataKey="month" tick={{ fill: "#000", fontSize: 10, fontFamily: "monospace" }} axisLine={false} tickLine={false} dy={10} />
-              <YAxis tick={{ fill: "#000", fontSize: 10, fontFamily: "monospace" }} axisLine={false} tickLine={false} dx={-10} domain={["dataMin - 30", "dataMax + 30"]} />
-              <Tooltip content={<CustomTooltip />} />
-              <Legend iconType="square" wrapperStyle={{ fontSize: 10, fontFamily: "monospace", paddingTop: 20 }} formatter={(v: string) => <span className="text-black ml-1 tracking-wider">{v === "immediate" ? "SPOT BANK RATE" : "RAENEST RATE"}</span>} />
-              <Area type="monotone" dataKey="immediate" stroke="#000000" strokeWidth={1} fill="rgba(0,0,0,0.05)" />
-              <Area type="monotone" dataKey="hold" stroke="#00FF88" strokeWidth={2} fill="rgba(0, 255, 136, 0.1)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#000000" strokeOpacity={0.05} vertical={false} />
+              <XAxis dataKey="month" tick={{ fill: "#86868b", fontSize: 13, fontWeight: 500 }} axisLine={false} tickLine={false} dy={10} />
+              <YAxis tick={{ fill: "#86868b", fontSize: 13, fontWeight: 500 }} axisLine={false} tickLine={false} dx={-10} domain={["dataMin - 30", "dataMax + 30"]} />
+              <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(0,0,0,0.1)', strokeWidth: 1 }} />
+              <Legend iconType="circle" wrapperStyle={{ fontSize: 14, fontWeight: 500, paddingTop: 20 }} formatter={(v: string) => <span className="text-[#1d1d1f] ml-1">{v === "immediate" ? "Spot Bank Rate" : "Raenest FastTrack"}</span>} />
+              <Area type="monotone" dataKey="immediate" stroke="#86868b" strokeWidth={2} fill="url(#colorImmediate)" />
+              <Area type="monotone" dataKey="hold" stroke="#34C759" strokeWidth={3} fill="url(#colorHold)" />
+              <defs>
+                <linearGradient id="colorImmediate" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#86868b" stopOpacity={0.1}/>
+                  <stop offset="95%" stopColor="#86868b" stopOpacity={0}/>
+                </linearGradient>
+                <linearGradient id="colorHold" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#34C759" stopOpacity={0.2}/>
+                  <stop offset="95%" stopColor="#34C759" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
             </AreaChart>
           </ResponsiveContainer>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border border-black text-black">
-        <div className="p-8 border-b md:border-b-0 md:border-r border-black bg-white/60">
-          <h4 className="ethos-label font-bold mb-4">STRATEGIC ADVANTAGE I</h4>
-          <p className="font-mono text-sm leading-relaxed text-black/80">
-            TRADITIONAL PLATFORMS EXERCISE FORCED CONVERSIONS AT NON-TRANSPARENT RATES (Avg -3.0% vs MARKET). BY RETAINING ASSET LIQUIDITY IN USD, YOU PREVENT VALUE EROSION.
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-[#1d1d1f]">
+        <div className="apple-card p-8 bg-white/50">
+          <h4 className="text-[17px] font-semibold mb-3 tracking-tight-apple">Strategic Advantage I</h4>
+          <p className="text-[15px] leading-relaxed text-[#86868b]">
+            Traditional platforms execute forced conversions at non-transparent rates. By retaining absolute asset liquidity in USD via Raenest, you proactively prevent structural value erosion.
           </p>
         </div>
-        <div className="p-8 bg-[#00FF88]/20 border-black bg-white/60">
-          <h4 className="ethos-label font-bold mb-4">STRATEGIC ADVANTAGE II</h4>
-          <p className="font-mono text-sm leading-relaxed text-black/80">
-            NATIVE USD SPENDING DIRECTLY FROM RAENEST VIRTUAL CARDS BYPASSES DOUBLE-CONVERSION PENALTIES WHEN PAYING FOR INTERNATIONAL SAAS OR DEVELOPER TOOLING.
+        <div className="apple-card p-8 bg-white/50">
+          <h4 className="text-[17px] font-semibold mb-3 tracking-tight-apple">Strategic Advantage II</h4>
+          <p className="text-[15px] leading-relaxed text-[#86868b]">
+            Native USD spending directly from Raenest Virtual Cards bypasses standard double-conversion penalties when investing in international SaaS or developer tooling.
           </p>
         </div>
       </div>

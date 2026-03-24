@@ -5,15 +5,16 @@ import { formatCurrency } from "@/lib/utils";
 import { getEntries, getSettings, getTotalNGN, getTotalUSD } from "@/lib/store";
 import { calculateTax } from "@/lib/tax";
 import type { IncomeEntry } from "@/lib/types";
+import { ArrowRight } from "lucide-react";
 
 function getBusiestMonth(entries: IncomeEntry[]): string {
   if (!entries.length) return "—";
   const counts: Record<string, number> = {};
   for (const e of entries) {
-    const m = new Date(e.date).toLocaleString("en-NG", { month: "short", year: "numeric" });
+    const m = new Date(e.date).toLocaleString("en-US", { month: "short", year: "numeric" });
     counts[m] = (counts[m] || 0) + 1;
   }
-  return Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0].toUpperCase();
+  return Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
 }
 
 function getTopPlatform(entries: IncomeEntry[], rate: number): string {
@@ -23,7 +24,7 @@ function getTopPlatform(entries: IncomeEntry[], rate: number): string {
     const ngn = e.currency === "NGN" ? e.amount : e.amount * rate;
     totals[e.platform] = (totals[e.platform] || 0) + ngn;
   }
-  return Object.entries(totals).sort((a, b) => b[1] - a[1])[0][0].toUpperCase();
+  return Object.entries(totals).sort((a, b) => b[1] - a[1])[0][0];
 }
 
 export default function WrappedPage() {
@@ -41,86 +42,76 @@ export default function WrappedPage() {
   if (!mounted) return null;
 
   return (
-    <div className="space-y-12 animate-fade-in pb-16">
-      {/* Editorial Header */}
-      <div className="border-b border-black pb-6 flex flex-col md:flex-row md:items-end justify-between gap-6">
+    <div className="space-y-8 animate-fade-in pb-24">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h1 className="ethos-title text-6xl md:text-8xl font-semibold text-black leading-none">
-            Annual Report.
+          <h1 className="text-4xl md:text-[56px] font-bold tracking-tighter-apple leading-none">
+            Annual Wrapped
           </h1>
-          <p className="ethos-label mt-6 text-black font-bold">
-            FY {new Date().getFullYear()} / COMPREHENSIVE YIELD ANALYSIS
+          <p className="text-[#86868b] mt-3 md:mt-4 text-[17px]">
+            Financial Summary {new Date().getFullYear()}.
           </p>
-        </div>
-        <div className="bg-black text-white px-4 py-2 ethos-label text-xs">
-          CONFIDENTIAL
         </div>
       </div>
 
-      {/* Hero Stats Spread */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border border-black bg-white/40 backdrop-blur-md">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         
         {/* Left Big Number */}
-        <div className="p-8 md:p-12 border-b md:border-b-0 md:border-r border-black bg-white">
-          <p className="ethos-label text-black/50 mb-4">I. GROSS RECEIPTS (USD)</p>
-          <p className="font-serif text-6xl md:text-8xl text-black leading-tight tracking-tight">
+        <div className="apple-card p-10 md:p-14 flex flex-col justify-center bg-white/60">
+          <p className="text-[13px] font-semibold text-[#86868b] uppercase tracking-wider mb-4">Total Value Inbound (USD)</p>
+          <p className="text-6xl lg:text-[100px] font-bold tracking-tighter-apple leading-[0.9] text-[#1d1d1f]">
             {formatCurrency(totalUSD, "USD")}
           </p>
-          <div className="mt-8 pt-6 border-t border-black">
-            <p className="ethos-label text-black/50 mb-1">LOCAL EXCHANGED VALUE</p>
-            <p className="font-mono text-xl md:text-2xl text-black font-bold">
-              {formatCurrency(totalNGN, "NGN")} <span className="text-sm opacity-50">@ ₦{settings.exchangeRate}</span>
+          <div className="mt-8 pt-8 border-t border-black/5">
+            <p className="text-[12px] font-semibold text-[#86868b] uppercase tracking-wider mb-2">Exchanged Equivalent</p>
+            <p className="text-2xl font-bold tracking-tighter-apple text-[#86868b]">
+              {formatCurrency(totalNGN, "NGN")}
             </p>
           </div>
         </div>
 
         {/* Right Detail Numbers */}
-        <div className="flex flex-col">
-          <div className="flex-1 p-8 md:p-12 border-b border-black bg-black text-white">
-            <p className="ethos-label text-white/50 mb-4">II. ASSESSED TAX DEBT</p>
-            <p className="font-serif text-5xl md:text-7xl text-[#FE4A03] leading-tight">
+        <div className="flex flex-col gap-6">
+          <div className="apple-card p-8 md:p-10 flex-1">
+            <p className="text-[13px] font-semibold text-[#86868b] uppercase tracking-wider mb-4">Estimated Tax Duty</p>
+            <p className="text-5xl lg:text-6xl font-bold tracking-tighter-apple text-[#FF3B30] leading-none mb-4">
               {formatCurrency(taxResult.totalTax)}
             </p>
-            <p className="ethos-label text-white/50 mt-4">
-              EFFECTIVE BURDEN: {taxResult.effectiveRate.toFixed(1)}%
-            </p>
+            <span className="bg-[#FF3B30]/10 text-[#FF3B30] px-3 py-1 rounded-full text-[13px] font-bold">
+              {taxResult.effectiveRate.toFixed(1)}% Effective
+            </span>
           </div>
           
-          <div className="flex-1 p-8 md:p-12 bg-[#00FF88] text-black">
-            <p className="ethos-label text-black/50 mb-4 font-bold">III. ARBITRAGE YIELD</p>
-            <p className="font-serif text-5xl md:text-7xl text-black leading-tight">
-              {formatCurrency(raenestSavings)}
-            </p>
-            <p className="ethos-label mt-4 font-bold">
-              CAPITAL RETAINED VIA RAENEST
+          <div className="apple-card p-8 md:p-10 flex-1 bg-gradient-to-br from-[#007AFF] to-[#0055b3] text-white border-transparent shadow-[0_8px_32px_rgba(0,122,255,0.3)]">
+            <p className="text-[13px] font-semibold text-white/80 uppercase tracking-wider mb-4">Yield Retention (Raenest)</p>
+            <p className="text-5xl lg:text-6xl font-bold tracking-tighter-apple leading-none">
+              +{formatCurrency(raenestSavings)}
             </p>
           </div>
         </div>
       </div>
 
-      {/* Metrics Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border border-black bg-white/40 backdrop-blur-md">
-        <div className="p-8 border-b md:border-b-0 md:border-r border-black">
-          <p className="ethos-label text-black/50 mb-4">PRIMARY ORIGIN</p>
-          <p className="font-mono text-2xl font-bold text-black">{getTopPlatform(entries, settings.exchangeRate)}</p>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="apple-card p-8">
+          <p className="text-[12px] font-semibold text-[#86868b] uppercase tracking-wider mb-4">Top Client Source</p>
+          <p className="text-2xl font-bold tracking-tighter-apple text-[#1d1d1f]">{getTopPlatform(entries, settings.exchangeRate)}</p>
         </div>
-        <div className="p-8 border-b md:border-b-0 md:border-r border-black">
-          <p className="ethos-label text-black/50 mb-4">PEAK VOLUME NODE</p>
-          <p className="font-mono text-2xl font-bold text-black">{getBusiestMonth(entries)}</p>
+        <div className="apple-card p-8">
+          <p className="text-[12px] font-semibold text-[#86868b] uppercase tracking-wider mb-4">Highest Volume Period</p>
+          <p className="text-2xl font-bold tracking-tighter-apple text-[#1d1d1f]">{getBusiestMonth(entries)}</p>
         </div>
-        <div className="p-8 bg-black text-white">
-          <p className="ethos-label text-white/50 mb-4">LIQUIDITY RESERVE</p>
-          <p className="font-mono text-2xl font-bold text-[#00FF88]">{formatCurrency(settings.taxPotSaved)}</p>
-          <p className="ethos-label text-[#00FF88] text-[10px] mt-2">
-            {taxResult.totalTax > 0 ? `${((settings.taxPotSaved / taxResult.totalTax) * 100).toFixed(0)}% COVERAGE` : "FULLY COVERED"}
-          </p>
+        <div className="apple-card p-8">
+          <p className="text-[12px] font-semibold text-[#86868b] uppercase tracking-wider mb-4">Liquidity Shield</p>
+          <div className="flex items-center gap-3">
+            <p className="text-2xl font-bold tracking-tighter-apple text-[#007AFF]">{formatCurrency(settings.taxPotSaved)}</p>
+          </div>
         </div>
       </div>
 
-      <div className="mt-16 text-center">
-        <h2 className="ethos-title text-4xl mb-6">Optimize.</h2>
-        <a href="https://www.raenest.com" target="_blank" rel="noopener noreferrer" className="btn-ethos inline-flex">
-          {">"} ACTIVATE RAENEST FASTTRACK
+      <div className="apple-card p-12 mt-12 text-center bg-white/70">
+        <h2 className="text-3xl font-bold tracking-tighter-apple mb-6">Maximize Returns Next Year</h2>
+        <a href="https://www.raenest.com" target="_blank" rel="noopener noreferrer" className="btn-apple bg-[#007AFF] hover:bg-[#0066cc] inline-flex items-center gap-2">
+          Activate Raenest FastTrack <ArrowRight className="w-4 h-4" />
         </a>
       </div>
     </div>
